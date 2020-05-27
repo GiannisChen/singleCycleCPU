@@ -28,18 +28,18 @@ module mips (clk, rst);
 	pc pc(
 		.clk(clk),
 		.rst(rst),
-		.niaddr(pc_next),
-		.iaddr(pc_cur)
+		.next_ins_addr(pc_next),
+		.ins_addr(pc_cur)
 	);
 
 	npc npc(
-		.iaddr(pc_cur),
+		.ins_addr(pc_cur),
 		.branch(branch),
 		.jump(jump),
 		.zero(zero),
 		.imm16(ins[15:0]),
 		.imm26(ins[25:0]),
-		.niaddr(pc_next),
+		.next_ins_addr(pc_next),
 		.op(ins[31:26]),
 		.busA(routa),
 		.ins(ins)
