@@ -1,7 +1,8 @@
-module ext (imm16, extOp, dout);
-    input                extOp;
-    input       [15:0]   imm16;
-    output reg  [31:0]   dout;
+module ext (
+    input                extOp,
+    input       [15:0]   imm16,
+    output reg  [31:0]   dout
+);
 
     always @ ( * ) begin
         case (extOp)

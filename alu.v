@@ -1,17 +1,20 @@
-module alu (ALUop, busA, busB, result, zero, shf);
-	input 	[4:0] 		ALUop;
-	input 	[31:0] 		busA, busB;
-	input 	[10:6]		shf;
-	output 				zero;
-	output reg 	[31:0] 	result;
+module alu (
+	input 	[4:0] 		aluOp,
+	input 	[31:0] 		busA,
+    input   [31:0]      busB,
+	input 	[10:6]		shf,
+
+	output 				zero,
+	output reg 	[31:0] 	result
+);
 
 	assign zero = (result == 0)? 1: 0;
 	wire [31:0] high = {1'b1,{31{1'b0}}};
     wire SLTUA = busA ^ high;
     wire SLTUB = busB ^ high;
 
-	always @ ( ALUop or busA or busB ) begin
-		case (ALUop)
+	always @ ( aluOp or busA or busB ) begin
+		case (aluOp)
 			5'b00000: result = busA + busB;
             5'b00001: result = busA - busB;
             5'b00010: result = (busA < busB) ? 1 : 0;

@@ -1,15 +1,15 @@
 module npc (
 	input [31:0] ins_addr,
-	input branch,
-	input jump,
-	input zero,
-	input [15:0] imm16,
-	input [25:0] imm26,
-	input [5:0] op,
-	input [31:0] busA,
-	input [31:0] ins,
+	input 			   branch,
+	input		       jump,
+	input 			   zero,
+	input 		[15:0] imm16,
+	input 		[25:0] imm26,
+	input 		[5:0]  op,
+	input 		[31:0] busA,
+	input 		[31:0] ins,
 	
-	output reg [31:0] next_ins_addr
+	output reg 	[31:0] next_ins_addr
 );
 
 	wire [31:0] pc_plus_4;

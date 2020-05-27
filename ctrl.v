@@ -1,15 +1,16 @@
-module ctrl (ins, branch, jump, regDst, aluSrc, aluOp, regWr, memWr, extOp, memToReg);
-	input 	[31:0] 	ins;
+module ctrl (
+	input 	        [31:0] 	ins,
 
-	output 	reg 	[4:0]	aluOp;
-	output 	reg		branch;
-	output 	reg		jump;
-	output 	reg		regDst;
-	output 	reg		aluSrc;
-	output 	reg		regWr;
-	output 	reg		memWr;
-	output 	reg		extOp;
-	output 	reg		memToReg;
+	output 	reg 	[4:0]	aluOp,
+	output 	reg		        branch,
+	output 	reg		        jump,
+	output 	reg		        regDst,
+	output 	reg		        aluSrc,
+	output 	reg		        regWr,
+	output 	reg		        memWr,
+	output 	reg		        extOp,
+	output 	reg		        memToReg
+);
 
 	wire [5:0] op;
 	wire [5:0] func;

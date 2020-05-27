@@ -1,10 +1,15 @@
-module regFile (busW, clk, wE, rW, rA, rB, busA, busB, ins, curPC);
-	input 	[31:0] 	busW;
-	input 	[4:0] 	rW, rA, rB;
-	input 			clk, wE;
-	input [31:0] ins;
-	input [31:0] curPC;
-	output 	[31:0] 	busA, busB;
+module rf (
+	input 	[31:0] 	busW,
+	input 	[4:0] 	Rw,
+	input 	[4:0] 	Ra,
+	input 	[4:0] 	Rb,
+	input 			clk,
+	input			regWr,
+	input 	[31:0] 	ins,
+	input 	[31:0] 	curPC,
+	output 	[31:0] 	busA,
+	output	[31:0] 	busB
+);
 
 	reg		[31:0] 	register[0:31];
 
@@ -13,17 +18,17 @@ module regFile (busW, clk, wE, rW, rA, rB, busA, busB, ins, curPC);
 
 	end
 
-	assign busA = (rA != 0)? register[rA]: 0;
-	assign busB = (rB != 0)? register[rB]: 0;
+	assign busA = (Ra != 0)? register[Ra]: 0;
+	assign busB = (Rb != 0)? register[Rb]: 0;
 
 	always @ ( posedge clk ) begin
-		if ((wE == 1) && (rW != 0)) begin
+		if ((regWr == 1) && (Rw != 0)) begin
 			if(ins[31:26]==6'b000000 && ins[5:0]==6'b001001)
 				register[31] <= curPC + 32'h0000_0004;
 			else if(ins[31:26]==6'b000011) 
 				register[31] <= curPC + 32'h0000_0004;
 			else
-				register[rW] <= busW;
+				register[Rw] <= busW;
 		end
 	end
 endmodule // Register File

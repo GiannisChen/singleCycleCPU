@@ -46,7 +46,7 @@ module mips (clk, rst);
 	);
 
 	im_4k im(
-		.iaddr(pc_cur[11:2]),
+		.ins_addr(pc_cur[11:2]),
 		.ins(ins)
 	);
 
@@ -71,13 +71,13 @@ module mips (clk, rst);
 		.dout(rWin)
 	);
 
-	regFile rf(
+	rf dut_rf(
 		.busW(rin),
 		.clk(clk),
-		.wE(regWr),
-		.rW(rWin),
-		.rA(ins[25:21]),
-		.rB(ins[20:16]),
+		.regWr(regWr),
+		.Rw(rWin),
+		.Ra(ins[25:21]),
+		.Rb(ins[20:16]),
 		.busA(routa),
 		.busB(routb),
 		.ins(ins),
@@ -85,7 +85,7 @@ module mips (clk, rst);
 	);
 
 	alu alu(
-		.ALUop(aluCtr),
+		.aluOp(aluCtr),
 		.busA(routa),
 		.busB(aluSrc_mux_out),
 		.result(alu_out),
