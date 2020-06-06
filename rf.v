@@ -5,7 +5,7 @@ module rf (
 	input 	[4:0] 	Rb,
 	input 			clk,
 	input			regWr,
-	input 	[31:0] 	ins,
+	input 			regL,
 	input 	[31:0] 	curPC,
 	output 	[31:0] 	busA,
 	output	[31:0] 	busB
@@ -23,9 +23,7 @@ module rf (
 
 	always @ ( posedge clk ) begin
 		if ((regWr == 1) && (Rw != 0)) begin
-			if(ins[31:26]==6'b000000 && ins[5:0]==6'b001001)
-				register[31] <= curPC + 32'h0000_0004;
-			else if(ins[31:26]==6'b000011) 
+			if(regL == 1) 
 				register[31] <= curPC + 32'h0000_0004;
 			else
 				register[Rw] <= busW;

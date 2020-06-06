@@ -15,10 +15,11 @@ module mips (clk, rst);
 	wire 	[31:0]	dm_out;
 	wire 	[4:0]	rWin;
 	wire 	[4:0]	aluCtr;
-	wire 			branch;
+	wire 	[1:0]	branch;
 	wire 			jump;
 	wire 			regDst;
 	wire 			aluSrc;
+	wire			regL;
 	wire 			regWr;
 	wire 			memWr;
 	wire 			extOp;
@@ -41,8 +42,8 @@ module mips (clk, rst);
 		.imm26(ins[25:0]),
 		.next_ins_addr(pc_next),
 		.op(ins[31:26]),
-		.busA(routa),
-		.ins(ins)
+		.offset(ins[15:0]),
+		.busA(routa)
 	);
 
 	im_4k im(
@@ -80,7 +81,7 @@ module mips (clk, rst);
 		.Rb(ins[20:16]),
 		.busA(routa),
 		.busB(routb),
-		.ins(ins),
+		.regL(regL),
 		.curPC(pc_cur)
 	);
 
@@ -116,6 +117,7 @@ module mips (clk, rst);
 		.regDst(regDst),
 		.aluSrc(aluSrc),
 		.aluOp(aluCtr),
+		.regL(regL),
 		.regWr(regWr),
 		.memWr(memWr),
 		.extOp(extOp),
