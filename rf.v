@@ -22,10 +22,10 @@ module rf (
 	assign busB = (Rb != 0)? register[Rb]: 0;
 
 	always @ ( posedge clk ) begin
-		if ((regWr == 1) && (Rw != 0)) begin
+		if ((regWr == 1)) begin
 			if(regL == 1) 
 				register[31] <= curPC + 32'h0000_0004;
-			else
+			else if(Rw != 0)
 				register[Rw] <= busW;
 		end
 	end

@@ -42,7 +42,6 @@ module mips (clk, rst);
 		.imm26(ins[25:0]),
 		.next_ins_addr(pc_next),
 		.op(ins[31:26]),
-		.offset(ins[15:0]),
 		.busA(routa)
 	);
 
