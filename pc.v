@@ -1,14 +1,16 @@
-module pc (clk, rst, niaddr, iaddr);
-	input 			clk;
-	input 			rst;
-	input 	[31:0]	niaddr;		// Next instruction address
-	output reg	[31:0]	iaddr;	// Instruction address
+module pc (
+	input 				clk,
+	input 				rst,
+	input 		[31: 0] next_ins_addr,
+	
+	output reg 	[31: 0] ins_addr
+);
 
 	always @ ( posedge clk ) begin
 		if (rst)
-			iaddr <= 32'h0000_3000;
+			ins_addr <= 32'h0000_3000;
 		else
-			iaddr <= niaddr;
+			ins_addr <= next_ins_addr;
 	end
 endmodule // Program Counter
 

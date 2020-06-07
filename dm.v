@@ -1,11 +1,12 @@
-module dm_4k (addr, din, memWr, clk, dout , op);
-	input 		[11:0] 	addr;
-	input 		[31:0] 	din;
-	input  				memWr;
-	input 				clk;
-	input		[5:0]   op;
-	output  reg	[31:0] 	dout;
+module dm_4k (
+	input 		[11:0] 	addr,
+	input 		[31:0] 	din,
+	input  				memWr,
+	input 				clk,
+	input		[5:0]   op,
 
+	output  reg	[31:0] 	dout
+);
 	reg [31:0] dm [1023:0];// 32-bit*1024
 	wire [7:0] tmpD[3:0];
 

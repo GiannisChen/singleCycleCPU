@@ -1,15 +1,17 @@
-module ctrl (ins, branch, jump, regDst, aluSrc, aluOp, regWr, memWr, extOp, memToReg);
-	input 	[31:0] 	ins;
+module ctrl (
+	input 	        [31:0] 	ins,
 
-	output 	reg 	[4:0]	aluOp;
-	output 	reg		branch;
-	output 	reg		jump;
-	output 	reg		regDst;
-	output 	reg		aluSrc;
-	output 	reg		regWr;
-	output 	reg		memWr;
-	output 	reg		extOp;
-	output 	reg		memToReg;
+	output 	reg 	[4:0]	aluOp,
+	output 	reg		[1:0]   branch,
+	output 	reg		        jump,
+	output 	reg		        regDst,
+	output 	reg		        aluSrc,
+    output  reg             regL,
+	output 	reg		        regWr,
+	output 	reg		        memWr,
+	output 	reg		        extOp,
+	output 	reg		        memToReg
+);
 
 	wire [5:0] op;
 	wire [5:0] func;
@@ -63,13 +65,14 @@ module ctrl (ins, branch, jump, regDst, aluSrc, aluOp, regWr, memWr, extOp, memT
 	always @ (*) begin
         case (op)
             R       :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b1;
                 extOp       = 1'b0;
                 aluSrc      = 1'b0;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 
                 case (func)
@@ -85,8 +88,8 @@ module ctrl (ins, branch, jump, regDst, aluSrc, aluOp, regWr, memWr, extOp, memT
                     SLL     : aluOp = 5'b00111;
                     SRL     : aluOp = 5'b01000;
                     SLTU    : aluOp = 5'b01001;
-                    JARL    : aluOp = 5'b01010;
-                    JR      : aluOp = 5'b01011;
+                    JARL    : begin aluOp = 5'b01010;   regL = 1'b1;    jump = 1'b1; end
+                    JR      : begin aluOp = 5'b01011;   jump = 1;   end
                     SLLV    : aluOp = 5'b01100;
                     SRA     : aluOp = 5'b01101;
                     SRAV    : aluOp = 5'b01110;
@@ -94,211 +97,233 @@ module ctrl (ins, branch, jump, regDst, aluSrc, aluOp, regWr, memWr, extOp, memT
                 endcase
             end
             BLTZ    :begin  //BLTZ & BGEZ
+                regL        = 1'b0;
                 regWr       = 1'b0;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b0;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b1;
                 jump        = 1'b0;
                 aluOp       = 5'b00000;
+                if(ins[20:16] == 5'b00001)
+                    branch      = 2'b01;
+                else if(ins[20:16] == 5'b00000)
+                    branch      = 2'b10;
             end
             J       :begin
+                regL        = 1'b0;
                 regWr       = 1'b0;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b0;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b1;
                 aluOp       = 5'b00000;
             end
             JAL     :begin
+                regL        = 1'b1;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b0;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b1;
                 aluOp       = 5'b01010;
             end
             BEQ     :begin         
+                regL        = 1'b0;
                 regWr       = 1'b0;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b0;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b1;
+                branch      = 2'b11;
                 jump        = 1'b0;
                 aluOp       = 5'b00001;
             end
             BNE     :begin
+                regL        = 1'b0;
                 regWr       = 1'b0;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b0;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b1;
+                branch      = 2'b11;
                 jump        = 1'b0;
                 aluOp       = 5'b00001;
             end
             BLEZ    :begin
+                regL        = 1'b0;
                 regWr       = 1'b0;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b0;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b1;
+                branch      = 2'b11;
                 jump        = 1'b0;
                 aluOp       = 5'b00000;
             end
             BGTZ    :begin
+                regL        = 1'b0;
                 regWr       = 1'b0;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b0;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b1;
+                branch      = 2'b11;
                 jump        = 1'b0;
                 aluOp       = 5'b00000;
             end
             ADDIU   :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b1;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b00000; 
             end
             SLTI    :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b1;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b00010;
             end
             SLTIU   :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b01001;
             end
             ANDI    :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b00011;
             end
             ORI     :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b00101;
             end
             XORI    :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b00110;
             end
             LUI     :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b0;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b10000;
             end
             LB      :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b1;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b1;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b00000;
             end
             LW      :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b1;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b1;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b00000;
             end
             SW      :begin
+                regL        = 1'b0;
                 regWr       = 1'b0;
                 regDst      = 1'b0;
                 extOp       = 1'b1;
                 aluSrc      = 1'b1;
                 memWr       = 1'b1;
                 memToReg    = 1'b0;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b00000;
             end
             LBU     :begin
+                regL        = 1'b0;
                 regWr       = 1'b1;
                 regDst      = 1'b0;
                 extOp       = 1'b1;
                 aluSrc      = 1'b1;
                 memWr       = 1'b0;
                 memToReg    = 1'b1;
-                branch      = 1'b0;
+                branch      = 2'b00;
                 jump        = 1'b0;
                 aluOp       = 5'b00000;
             end
             SB      :begin
+                regL        = 1'b0;
                 regWr       = 1'b0;
                 regDst      = 1'b0;
                 extOp       = 1'b1;
                 aluSrc      = 1'b1;
                 memWr       = 1'b1;
                 memToReg    = 1'b0;
-                branch      = 1'b1;//???????
+                branch      = 2'b11;//???????
                 jump        = 1'b0;
                 aluOp       = 5'b00000;
             end
